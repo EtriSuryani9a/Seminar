@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruang Rasa & Logika | Berpikir Komputasional</title>
+<style>
+:root{
+  --navy:#23345d; --blue:#5277d9; --blue-soft:#eaf0ff; --purple:#8a70c9;
+  --purple-soft:#f1edff; --orange:#f2a65a; --orange-soft:#fff2e4;
+  --green:#328b72; --green-soft:#e7f7f0; --ink:#26324a; --muted:#69758b;
+  --bg:#f6f8fc; --white:#fff; --line:#e5eaf3; --shadow:0 12px 30px rgba(35,52,93,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);line-height:1.6}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100vh}
+.sidebar{background:var(--white);border-right:1px solid var(--line);padding:24px 16px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 8px 24px}
+.brand-icon{width:44px;height:44px;border-radius:15px;background:linear-gradient(135deg,var(--blue),var(--purple));display:grid;place-items:center;color:#fff;font-size:23px}
+.brand h1{font-size:15px;line-height:1.25;margin:0;color:var(--navy)}
+.brand p{font-size:11px;color:var(--muted);margin:4px 0 0}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1.3px;font-weight:800;color:#9aa4b7;margin:18px 12px 8px}
+.nav-btn{border:0;background:transparent;width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:12px;border-radius:12px;color:#5d6880;font-weight:650;font-size:13px;margin:3px 0;transition:.2s}
+.nav-btn .ico{width:25px;text-align:center;font-size:17px}
+.nav-btn:hover,.nav-btn.active{background:var(--blue-soft);color:var(--blue)}
+.sidebar-note{margin:26px 5px 0;padding:15px;background:var(--orange-soft);border-radius:15px;font-size:12px;color:#76552d}
+.sidebar-note strong{display:block;margin-bottom:4px}
+main{min-width:0;padding:28px clamp(16px,3vw,42px) 50px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:25px}
+.eyebrow{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--blue);font-weight:800}
+.topbar h2{font-size:22px;color:var(--navy);margin:3px 0 0}
+.pill{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);padding:8px 12px;border-radius:99px;color:var(--muted);font-size:12px;font-weight:650}
+.page{display:none;animation:fade .25s ease}.page.active{display:block}
+@keyframes fade{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:none}}
+.hero{background:linear-gradient(120deg,#eaf0ff 0%,#f2edff 58%,#fff2e4 100%);border:1px solid #e3e8fb;border-radius:25px;padding:clamp(24px,4vw,42px);display:grid;grid-template-columns:1.5fr .8fr;gap:20px;align-items:center;overflow:hidden}
+.hero h2{font-size:clamp(27px,3vw,39px);line-height:1.15;letter-spacing:-1px;color:var(--navy);margin:10px 0 14px}
+.hero p{color:#596783;max-width:650px;margin:0 0 20px}
+.hero-art{display:grid;place-items:center;font-size:100px;min-height:170px;position:relative}
+.hero-art:before{content:"";width:190px;height:190px;border-radius:50%;background:rgba(255,255,255,.65);position:absolute}
+.hero-art span{position:relative;filter:drop-shadow(0 10px 12px #9ba9d455)}
+.btn{border:0;border-radius:11px;padding:11px 16px;font-weight:750;font-size:13px;transition:.18s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{transform:translateY(-1px);filter:brightness(.98)}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 6px 14px #5277d933}
+.btn-secondary{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.btn-purple{background:var(--purple);color:#fff}
+.btn-orange{background:var(--orange);color:#513b21}
+.btn-green{background:var(--green);color:#fff}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}
+.stat,.card{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
+.stat{display:flex;align-items:center;gap:14px}
+.stat-icon{width:44px;height:44px;border-radius:14px;background:var(--blue-soft);display:grid;place-items:center;font-size:21px}
+.stat strong{display:block;font-size:20px;color:var(--navy);line-height:1.2}
+.stat small{color:var(--muted);font-size:12px}
+.section-heading{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:28px 0 14px}
+.section-heading h3{margin:0;color:var(--navy);font-size:20px}
+.section-heading p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card h3,.card h4{color:var(--navy);margin:0 0 8px}
+.card p{color:var(--muted);font-size:14px;margin:6px 0 12px}
+.card-icon{width:43px;height:43px;display:grid;place-items:center;border-radius:14px;background:var(--purple-soft);font-size:21px;margin-bottom:14px}
+.tag{display:inline-block;border-radius:7px;padding:4px 8px;background:var(--blue-soft);color:var(--blue);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.callout{padding:16px 18px;border-radius:14px;background:var(--green-soft);border:1px solid #d4f0e4;color:#2b6758;font-size:13px;margin:14px 0}
+.problem-box{border-left:4px solid var(--orange);background:var(--orange-soft);padding:18px;border-radius:0 14px 14px 0;margin:15px 0}
+.problem-box h4{margin:0 0 7px;color:#75512c}
+.problem-box p{margin:0;color:#765f43;font-size:14px}
+.field{margin:14px 0}
+.field label{display:block;font-size:13px;font-weight:750;color:var(--navy);margin-bottom:7px}
+input[type=text],textarea,select{width:100%;padding:12px 13px;border:1px solid #dce3ef;border-radius:11px;background:#fff;color:var(--ink);outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #5277d91a}
+textarea{min-height:105px;resize:vertical}
+.mood-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:16px 0}
+.mood-option{background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px 7px;text-align:center;color:var(--muted)}
+.mood-option .face{font-size:29px;display:block;margin-bottom:4px}
+.mood-option span:last-child{font-size:11px;font-weight:700}
+.mood-option.selected{border:2px solid var(--blue);background:var(--blue-soft);color:var(--navy)}
+.result{display:none;padding:13px 15px;background:var(--green-soft);color:#2b6758;border-radius:11px;font-size:13px;margin-top:13px}
+.result.show{display:block}
+.checklist{display:grid;gap:9px}
+.check-row{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:11px;background:#fff;font-size:13px}
+.check-row input{margin-top:4px;accent-color:var(--blue)}
+.role{border:1px solid var(--line);border-radius:13px;padding:15px;background:#fff}
+.role strong{display:block;color:var(--navy);font-size:14px}
+.role small{color:var(--muted)}
+.steps{display:grid;gap:10px;margin:15px 0}
+.step-row{display:grid;grid-template-columns:36px 1fr 40px;gap:9px;align-items:center}
+.step-number{width:32px;height:32px;display:grid;place-items:center;border-radius:10px;background:var(--blue-soft);color:var(--blue);font-weight:800}
+.step-row input{min-width:0}
+.icon-btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px;color:var(--muted)}
+.progress-track{height:8px;border-radius:99px;background:#edf0f7;overflow:hidden;margin:10px 0}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple));transition:width .3s}
+.quiz-question{border:1px solid var(--line);padding:16px;border-radius:14px;margin:12px 0;background:#fff}
+.quiz-question h4{margin:0 0 10px;font-size:14px}
+.quiz-question label{display:flex;gap:8px;padding:7px 0;font-size:13px;color:var(--muted);cursor:pointer}
+.quiz-question input{accent-color:var(--blue)}
+.footer{margin-top:35px;padding-top:20px;border-top:1px solid var(--line);color:#9aa4b7;font-size:11px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:#fff;padding:13px 17px;border-radius:12px;box-shadow:var(--shadow);font-size:13px;display:none;z-index:50;max-width:320px}
+.toast.show{display:block;animation:fade .2s}
+.mobile-menu{display:none}
+.small-note{font-size:12px;color:var(--muted)}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:fixed;z-index:30;left:-280px;width:260px;transition:left .25s;box-shadow:var(--shadow)}.sidebar.open{left:0}.mobile-menu{display:inline-flex}.hero{grid-template-columns:1fr}.hero-art{display:none}.stats{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr}.grid-2{grid-template-columns:1fr}.topbar{align-items:flex-start}.topbar h2{font-size:18px}}
+@media(max-width:560px){main{padding:18px 13px 35px}.topbar .pill{display:none}.mood-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{padding:22px}.hero h2{font-size:28px}.stat{padding:15px}.section-heading{align-items:flex-start;flex-direction:column}}
+
+/* === VISUAL REFRESH: TEGAS, PROFESIONAL, TETAP CERIA === */
+:root{
+  --navy:#172554;
+  --blue:#315ee8;
+  --blue-soft:#e9efff;
+  --purple:#7354d6;
+  --purple-soft:#f0ebff;
+  --orange:#ffb454;
+  --orange-soft:#fff3df;
+  --green:#16856b;
+  --green-soft:#e2f7ef;
+  --ink:#18243b;
+  --muted:#65718a;
+  --bg:#f3f6fb;
+  --white:#ffffff;
+  --line:#dfe6f1;
+  --shadow:0 10px 28px rgba(23,37,84,.075);
+}
+body{background:var(--bg);color:var(--ink);font-family:Inter,"Segoe UI",Arial,sans-serif}
+.sidebar{border-right:1px solid #d9e1ef;background:#fff;padding:25px 17px}
+.brand-icon{border-radius:13px;background:var(--navy);box-shadow:4px 4px 0 #ffbd68}
+.brand h1{font-size:15px;letter-spacing:.45px;font-weight:900}
+.nav-label{color:#7f8ba3;font-size:10px;font-weight:900;letter-spacing:1.5px}
+.nav-btn{border-radius:10px;padding:12px 13px;font-weight:700;color:#58657d;border-left:3px solid transparent}
+.nav-btn:hover{background:#f1f4ff;color:var(--blue)}
+.nav-btn.active{background:#eaf0ff;color:var(--navy);border-left-color:var(--blue);font-weight:850}
+.nav-btn .ico{font-size:18px}
+.sidebar-note{border:1px solid #ffe0b4;border-left:4px solid var(--orange);border-radius:11px;background:#fff7eb;color:#6b4a20}
+main{padding-top:25px}
+.topbar{margin-bottom:24px}
+.eyebrow{color:var(--blue);font-weight:900;letter-spacing:1.35px}
+.topbar h2{font-weight:850;letter-spacing:-.45px}
+.pill{border-color:#dce4f3;background:#fff;color:#485774;font-weight:750}
+.hero{background:linear-gradient(112deg,#e6edff 0%,#f2efff 63%,#fff0d9 100%);border:1px solid #d5def4;border-radius:20px;position:relative}
+.hero:after{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:linear-gradient(180deg,var(--blue),var(--purple),var(--orange));border-radius:20px 0 0 20px}
+.hero h2{color:var(--navy);font-weight:900;letter-spacing:-1.25px}
+.hero p{color:#4f5d79;font-size:15px;line-height:1.75}
+.hero-art:before{background:rgba(255,255,255,.82);border:1px solid #fff;box-shadow:0 15px 35px #657bb31b}
+.hero-art span{font-size:91px}
+.btn{border-radius:9px;font-weight:800;letter-spacing:.05px}
+.btn-primary{background:var(--blue);box-shadow:0 5px 0 #2447b7;color:#fff}
+.btn-primary:active{transform:translateY(2px);box-shadow:0 3px 0 #2447b7}
+.btn-secondary{border:1px solid #d5deec;color:var(--navy);background:#fff}
+.btn-secondary:hover{border-color:#9aafea;background:#f8faff}
+.btn-purple{background:var(--purple)}
+.btn-orange{background:var(--orange)}
+.stat,.card{border:1px solid var(--line);border-radius:15px;box-shadow:0 5px 17px rgba(23,37,84,.045)}
+.stat{border-bottom:3px solid #dce5ff}
+.stat:nth-child(2){border-bottom-color:#e3d9ff}
+.stat:nth-child(3){border-bottom-color:#ffdfb3}
+.stat-icon{border-radius:11px;background:#e9efff}
+.section-heading{margin-top:30px}
+.section-heading h3{font-size:21px;font-weight:850;letter-spacing:-.3px}
+.section-heading p{font-size:13px}
+.card h3,.card h4{font-weight:850;letter-spacing:-.2px}
+.card-icon{border-radius:11px;background:var(--blue-soft);border:1px solid #dce5ff}
+.tag{border-radius:6px;background:#e7edff;color:#284fc6;font-weight:900;letter-spacing:.65px}
+.callout{border-radius:11px;border-left:4px solid var(--green);background:#eaf8f2;color:#286653}
+.problem-box{border-radius:0 12px 12px 0;background:#fff3df;border-left:5px solid var(--orange)}
+.problem-box h4{font-weight:850;color:#6f4515}
+.field label{font-weight:800}
+input[type=text],textarea,select{border-radius:9px;border-color:#d5deec}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #315ee81a}
+.mood-option{border-radius:11px;border-color:#dfe6f1;transition:all .18s}
+.mood-option:hover{transform:translateY(-2px);border-color:#a9b9eb}
+.mood-option.selected{border:2px solid var(--blue);background:#eaf0ff;color:var(--navy);box-shadow:0 4px 12px #315ee81a}
+.role{border-radius:10px;border-color:#dfe6f1;border-top:3px solid #d6e0ff}
+.role:nth-child(2){border-top-color:#d9cdfc}
+.role:nth-child(3){border-top-color:#ffddb0}
+.role:nth-child(4){border-top-color:#bdebdc}
+.check-row{border-radius:9px;border-color:#e0e6f0}
+.check-row:has(input:checked){background:#f0f5ff;border-color:#cbd8ff}
+.step-number{border-radius:9px;background:var(--navy);color:#fff}
+.icon-btn{border-radius:8px;font-weight:900}
+.quiz-question{border-radius:12px;border-left:3px solid #d5defd}
+.quiz-question label:hover{color:var(--navy)}
+.progress-track{background:#e6ebf4}
+.footer{border-top-color:#dfe6f1}
+@media(min-width:901px){main{max-width:1600px;margin:0 auto;width:100%}}
+
+</style>
+<style>
+
+/* === FINAL STYLE PASS: BOLD, CLEAN, LIVELY === */
+:root{--navy:#111d3b;--blue:#315be8;--blue-soft:#eaf0ff;--purple:#7951d5;--purple-soft:#f1ebff;--orange:#ffb547;--orange-soft:#fff3dc;--green:#148568;--green-soft:#e3f7ef;--ink:#17233b;--muted:#65718a;--bg:#f3f6fc;--white:#fff;--line:#dce4f1;--shadow:0 12px 28px rgba(17,29,59,.07)}
+body{background:var(--bg);color:var(--ink);letter-spacing:.02px}
+.sidebar{background:linear-gradient(180deg,#111d3b 0%,#18284d 100%);border-right:0;padding:25px 16px;color:#fff}
+.brand{padding:5px 9px 26px;border-bottom:1px solid rgba(255,255,255,.13)}
+.brand-icon{background:linear-gradient(140deg,#4774ff,#8b61e8);box-shadow:4px 4px 0 #ffbd61;color:#fff}
+.brand h1{color:#fff;font-weight:900;letter-spacing:.75px}.brand p{color:#b7c4e5}
+.sidebar .nav-label{color:#91a2ca;margin-top:22px}
+.sidebar .nav-btn{color:#d1d9ed;border-left:3px solid transparent;border-radius:10px;padding:12px 13px;margin:4px 0}
+.sidebar .nav-btn:hover{background:rgba(255,255,255,.08);color:#fff}
+.sidebar .nav-btn.active{background:#fff;color:#17234a;border-left-color:#ffb547;box-shadow:0 5px 16px rgba(0,0,0,.12);font-weight:850}
+.sidebar-note{background:#fff0d5;border:0;border-left:4px solid #ffb547;color:#62451e;border-radius:10px;margin-top:28px}
+main{padding-top:27px}.topbar{padding-bottom:17px;border-bottom:1px solid #e1e7f1}
+.eyebrow{font-size:10px;font-weight:900;letter-spacing:1.5px}
+.topbar h2{font-size:23px;font-weight:900;letter-spacing:-.65px}
+.pill{background:#fff;border:1px solid #dce4f1;box-shadow:0 3px 10px rgba(17,29,59,.035);color:#405070}
+.hero{position:relative;border:0;border-radius:19px;background:linear-gradient(115deg,#e5edff 0%,#f0eaff 60%,#fff0d5 100%);box-shadow:0 12px 30px rgba(49,91,232,.09);padding:clamp(27px,4vw,44px)}
+.hero:after{width:8px;border-radius:19px 0 0 19px}
+.hero h2{font-size:clamp(30px,3.3vw,43px);font-weight:950;line-height:1.08;letter-spacing:-1.45px}
+.hero p{font-size:15px;line-height:1.8;color:#465574}.hero .tag{background:#fff;border:1px solid #dce4ff}
+.hero-art:before{width:205px;height:205px;background:rgba(255,255,255,.76);border:1px solid rgba(255,255,255,.9);box-shadow:0 16px 40px rgba(56,72,130,.09)}
+.hero-art span{font-size:95px}
+.btn{border-radius:9px;padding:11px 16px;font-size:13px;font-weight:850;transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
+.btn-primary{background:#315be8;box-shadow:0 4px 0 #1f3fae;color:#fff}
+.btn-primary:hover{background:#244ed9;box-shadow:0 6px 0 #1f3fae;transform:translateY(-2px)}
+.btn-primary:active{transform:translateY(2px);box-shadow:0 2px 0 #1f3fae}
+.btn-secondary{background:#fff;border:1px solid #d5deec;color:#18264b;box-shadow:0 2px 0 #e5eaf3}
+.btn-secondary:hover{background:#f5f7ff;border-color:#aebff6;transform:translateY(-1px)}
+.btn-purple{background:#7951d5;box-shadow:0 4px 0 #5634aa}.btn-green{background:#148568;box-shadow:0 4px 0 #0b634d}
+.stats{gap:15px}.stat,.card{border:1px solid #e0e6f0;border-radius:15px;box-shadow:0 6px 18px rgba(17,29,59,.045)}
+.stat{position:relative;overflow:hidden;border-bottom:0}.stat:after{content:"";position:absolute;bottom:0;left:0;right:0;height:4px;background:#315be8}
+.stat:nth-child(2):after{background:#7951d5}.stat:nth-child(3):after{background:#ffb547}
+.stat-icon{border-radius:11px;background:#eaf0ff;color:#2447c8}
+.section-heading{margin:30px 0 15px}.section-heading h3{font-size:21px;font-weight:900;letter-spacing:-.45px}
+.section-heading p{font-size:13px;color:#6b7690}.card{transition:box-shadow .18s ease,border-color .18s ease}
+.card:hover{border-color:#d2dcf0;box-shadow:0 10px 24px rgba(17,29,59,.065)}
+.card h3,.card h4{font-weight:850;letter-spacing:-.25px}
+.card-icon{border-radius:11px;border:1px solid #dce5ff;background:#eaf0ff}
+.grid-3 .card:nth-child(2) .card-icon,.grid-2 .card:nth-child(2) .card-icon{background:#f1ebff;border-color:#e4d9ff}
+.grid-3 .card:nth-child(3) .card-icon{background:#fff3dc;border-color:#ffe2b2}
+.tag{border-radius:6px;font-size:10px;font-weight:900;letter-spacing:.65px}
+.callout{border-radius:10px;border-left:4px solid #148568;background:#e8f8f1;color:#245f50}
+.problem-box{background:#fff3dc;border-left:5px solid #ffb547}
+.field label{font-size:13px;font-weight:850}
+input[type=text],textarea,select{border-radius:9px;border:1px solid #d8e0ed;background:#fff}
+input:focus,textarea:focus,select:focus{border-color:#315be8;box-shadow:0 0 0 3px rgba(49,91,232,.12)}
+.mood-option{border-radius:11px;border:1px solid #dce4f1;background:#fff}
+.mood-option:hover{border-color:#a8b9f3;transform:translateY(-2px)}
+.mood-option.selected{border:2px solid #315be8;background:#eaf0ff;color:#172554;box-shadow:0 5px 14px rgba(49,91,232,.12)}
+.role{border-radius:10px;border:1px solid #e0e6f0;border-top:3px solid #315be8}
+.role:nth-child(2){border-top-color:#7951d5}.role:nth-child(3){border-top-color:#ffb547}.role:nth-child(4){border-top-color:#148568}
+.check-row{border-radius:9px;border-color:#e0e6f0;transition:background .15s,border-color .15s}
+.check-row:has(input:checked){background:#f0f4ff;border-color:#c5d3ff}.check-row input{accent-color:#315be8}
+.step-number{border-radius:8px;background:#172554;color:#fff;font-weight:900}.icon-btn{border-radius:8px;font-size:18px;font-weight:800}
+.quiz-question{border-radius:11px;border-left:4px solid #c9d5ff}.quiz-question:nth-of-type(2n){border-left-color:#d9c9ff}
+.quiz-question label{border-radius:7px;padding:8px 9px}.quiz-question label:hover{background:#f3f6ff;color:#172554}
+.result{border:1px solid #ccebdd;border-left:4px solid #148568;border-radius:9px}
+.footer{color:#78849b;border-top-color:#dfe6f1}.toast{border-left:4px solid #ffb547;border-radius:10px}
+@media(max-width:900px){.sidebar{background:linear-gradient(180deg,#111d3b 0%,#18284d 100%)}.sidebar .nav-btn{color:#d1d9ed}.sidebar .nav-btn.active{color:#17234a;background:#fff}.topbar h2{font-size:19px}}
+@media(max-width:560px){.hero{padding:23px}.hero h2{font-size:30px}.topbar{padding-bottom:14px}}
+
+</style>
+
+<style id="design-and-pse-enhancements">
+:root{--navy:#172b4d;--blue:#2463c5;--blue-soft:#eaf3ff;--purple:#7250bd;--purple-soft:#f2edff;--orange:#f4b544;--orange-soft:#fff5df;--green:#21866e;--green-soft:#e7f7f1;--ink:#1f2d43;--muted:#62718a;--bg:#f4f7fc;--line:#dce5f2;--shadow:0 12px 28px rgba(23,43,77,.09)}
+body{background:linear-gradient(180deg,#f7f9fd 0%,#eef3fb 100%);line-height:1.65}
+.layout{grid-template-columns:272px minmax(0,1fr)}
+.sidebar{background:linear-gradient(180deg,#172b4d 0%,#203b69 100%);border-right:0;padding:24px 17px;color:#fff;box-shadow:8px 0 28px rgba(23,43,77,.08);z-index:5}
+.brand{border-bottom:1px solid rgba(255,255,255,.14);margin-bottom:20px}.brand-icon{background:linear-gradient(135deg,#3985f6,#8665db);box-shadow:0 8px 20px #101d3b66}.brand h1{color:#fff;letter-spacing:.4px}.brand p{color:#c5d4ee}.nav-label{color:#9fb4d5}.nav-btn{color:#dce7f8;border:1px solid transparent;padding:12px 11px;border-radius:12px}.nav-btn .ico{flex:0 0 27px}.nav-btn:hover{background:#ffffff13;color:#fff}.nav-btn.active{background:#fff;color:#17345f;border-color:#f6c35d;box-shadow:0 7px 18px #091a3433;font-weight:800}.sidebar-note{background:#fff2cf;color:#62451c;border:1px solid #f8d681;line-height:1.55}
+main{padding:28px clamp(16px,3vw,42px) 46px}.topbar{padding:15px 18px;background:rgba(255,255,255,.86);border:1px solid var(--line);border-radius:18px;box-shadow:0 5px 18px rgba(23,43,77,.04)}.eyebrow{color:#2866c3}.topbar h2{font-weight:850;letter-spacing:-.35px}.pill{background:#f4f0ff;border-color:#e1d8ff;color:#5b4695}
+.hero{background:linear-gradient(125deg,#e8f2ff 0%,#f1edff 58%,#fff3dc 100%);border:1px solid #dbe5f8;box-shadow:0 14px 32px rgba(36,99,197,.08);position:relative}.hero:after{content:"";position:absolute;width:7px;left:0;top:24px;bottom:24px;border-radius:0 8px 8px 0;background:linear-gradient(180deg,#2c78dc,#8b65d9,#f4b544)}.hero h2{font-weight:900;color:#172f59}.hero-art:before{background:linear-gradient(135deg,#fff,#e8efff);box-shadow:0 12px 32px #aabce744}.hero-art span{font-size:clamp(64px,8vw,100px)}
+.btn{border-radius:12px;font-weight:800;min-height:42px}.btn-primary{background:linear-gradient(135deg,#2463c5,#347ce2);box-shadow:0 7px 16px #2463c533}.btn-purple{background:linear-gradient(135deg,#6744b4,#8b68d2)}.btn-orange{background:#f4b544}.btn-green{background:linear-gradient(135deg,#21866e,#35a486)}.btn-secondary{border-color:#d5dfed;background:#fff}.btn:focus-visible,.nav-btn:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #f4b544;outline-offset:2px}
+.stat,.card{border-color:#dce5f2;box-shadow:0 9px 24px rgba(23,43,77,.055);transition:transform .18s,box-shadow .18s}.card{border-radius:20px}.card:hover{box-shadow:0 13px 28px rgba(23,43,77,.085)}.stat{border-radius:17px}.stat-icon,.card-icon{background:linear-gradient(135deg,#e5efff,#f0eaff);color:#244f9b}.section-heading h3,.card h3,.card h4{letter-spacing:-.25px}.section-heading h3{font-weight:850}.tag{border-radius:999px;background:#fff4d8;border:1px solid #f4d98b;color:#74551c;padding:5px 10px;font-weight:800}.callout{border-left:5px solid #f4b544;background:linear-gradient(100deg,#fff5df,#fffaf0);border-radius:14px;padding:17px 19px}.problem-box{border-radius:18px;border:1px solid #f4d99a;background:linear-gradient(120deg,#fff5df,#fffaf0)}.role{border:1px solid #dfe7f3;border-radius:14px;background:#f9fbff;padding:14px}.role strong{color:#244775}.mood-option{min-height:94px;border:1px solid #d8e2f0;background:#fbfdff;border-radius:15px}.mood-option.selected{border:2px solid #2463c5;background:#eaf3ff;box-shadow:0 0 0 3px #2463c51a}.field label{font-weight:800;color:#30415e}.field input,.field textarea,.field select{border:1px solid #d5dfed;border-radius:12px;background:#fcfdff}.field input:focus,.field textarea:focus{border-color:#6e94e4;box-shadow:0 0 0 3px #2463c51a}.check-row{border:1px solid #e2e9f3;border-radius:11px;background:#fbfcff;padding:10px 12px}.result{border-radius:13px;background:#eaf7f2;border:1px solid #c7ebdd;color:#17634f}.small-note{color:#748098}.quiz-question{border:1px solid #e1e8f3;border-radius:14px;background:#fbfcff;padding:16px}.footer{border-top:1px solid #dce5f2;color:#72809a;padding-top:18px}
+.pse-support{margin-top:14px;padding:16px 18px;border-radius:16px;background:linear-gradient(120deg,#edf5ff,#f4efff);border:1px solid #d9e3fa}.pse-support h4{margin:0 0 6px;color:#203c6b}.pse-support p{margin:0;color:#4c5d79;font-size:14px}.pse-support .support-label{display:inline-block;margin-bottom:7px;font-size:11px;text-transform:uppercase;letter-spacing:.8px;font-weight:900;color:#6b50b0}.phrase-tools{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.phrase-chip{border:1px solid #d9d0f7;background:#f7f4ff;color:#55408c;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:750}.phrase-chip:hover{background:#eae2ff}.mood-support-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.mood-support-grid .card{padding:17px}.mood-support-grid h4{margin:0 0 6px;color:#203c6b}.mood-support-grid p{margin:0;font-size:13px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:fixed;left:0;top:0;bottom:0;width:285px;height:100dvh;transform:translateX(-105%);transition:transform .22s;box-shadow:16px 0 35px #1425442b}.sidebar.open{transform:translateX(0)}.mobile-menu{display:inline-flex!important}.hero{grid-template-columns:1fr .55fr}.hero-art{min-height:130px}.stats{gap:10px}}
+@media(max-width:650px){.hero{grid-template-columns:1fr}.hero-art{display:none}.stats{grid-template-columns:1fr}.grid-2,.grid-3{grid-template-columns:1fr}.mood-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.topbar{align-items:flex-start}.topbar .pill{display:none}.mood-support-grid{grid-template-columns:1fr}.section-heading{align-items:flex-start;flex-direction:column}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="brand-icon">🧠</div>
+    <div><h1>RUANG RASA<br>& LOGIKA</h1><p>Petualangan Berpikir Komputasional</p></div>
+  </div>
+  <div class="nav-label">Ruang Belajar</div>
+  <button class="nav-btn active" data-page="home"><span class="ico">⌂</span> Beranda</button>
+  <button class="nav-btn" data-page="mood"><span class="ico">💗</span> Mood Check-in</button>
+  <button class="nav-btn" data-page="mission"><span class="ico">🔎</span> Misi Pemecahan Masalah</button>
+  <button class="nav-btn" data-page="collab"><span class="ico">🤝</span> Ruang Kolaborasi</button>
+  <button class="nav-btn" data-page="lab"><span class="ico">🧩</span> Laboratorium CT</button>
+  <button class="nav-btn" data-page="algorithm"><span class="ico">⚙️</span> Susun Algoritma</button>
+  <button class="nav-btn" data-page="reflection"><span class="ico">🌱</span> Refleksi & Evaluasi</button>
+  <div class="sidebar-note"><strong>💡 Ingat, Penjelajah!</strong>Setiap orang bisa memiliki ide berbeda. Dengarkan, hargai, dan bangun solusi bersama.</div>
+</aside>
+
+<main>
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="btn btn-secondary mobile-menu" id="menuToggle" aria-label="Buka menu">☰</button>
+      <div><div class="eyebrow">Koding dan Kecerdasan Artifisial • Kelas X SMK</div><h2 id="pageTitle">Selamat datang, Penjelajah!</h2></div>
+    </div>
+    <div class="pill">✨ PBL + Pembelajaran Sosial Emosional</div>
+  </header>
+
+  <section class="page active" id="home">
+    <div class="hero">
+      <div>
+        <span class="tag">Misi pembelajaran interaktif</span>
+        <h2>Gunakan logika.<br>Kenali rasa.<br>Temukan solusi.</h2>
+        <p>Selamat datang di petualangan Berpikir Komputasional! Kita akan menyelesaikan masalah antrean kantin dengan memecah masalah, menemukan pola, memilih informasi penting, dan menyusun algoritma—sambil belajar memahami diri dan bekerja sama.</p>
+        <button class="btn btn-primary" onclick="showPage('mood')">Mulai Petualangan <span>→</span></button>
+      </div>
+      <div class="hero-art"><span>🧠💡</span></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-icon">🎯</div><div><strong>1 Misi</strong><small>Masalah nyata di kantin</small></div></div>
+      <div class="stat"><div class="stat-icon">🧩</div><div><strong>3 Konsep CT</strong><small>Dekomposisi, pola, abstraksi</small></div></div>
+      <div class="stat"><div class="stat-icon">💗</div><div><strong>5 Kompetensi</strong><small>Pembelajaran sosial emosional</small></div></div>
+    </div>
+    <div class="section-heading"><div><h3>Jalur petualanganmu</h3><p>Ikuti tahapan ini secara berurutan atau buka bagian yang ingin dipelajari.</p></div></div>
+    <div class="grid-3">
+      <div class="card"><div class="card-icon">💗</div><h4>01. Kenali Diri</h4><p>Periksa perasaan dan kesiapan belajar sebelum memulai misi.</p><button class="btn btn-secondary" onclick="showPage('mood')">Mulai check-in</button></div>
+      <div class="card"><div class="card-icon">🔎</div><h4>02. Selidiki Masalah</h4><p>Kenali tantangan antrean kantin dan kebutuhan orang-orang yang terlibat.</p><button class="btn btn-secondary" onclick="showPage('mission')">Buka misi</button></div>
+      <div class="card"><div class="card-icon">⚙️</div><h4>03. Rancang Solusi</h4><p>Susun langkah penyelesaian yang masuk akal, adil, dan dapat diuji.</p><button class="btn btn-secondary" onclick="showPage('algorithm')">Rancang algoritma</button></div>
+    </div>
+    <div class="callout"><strong>Tujuan pembelajaran:</strong> Setelah mengikuti kegiatan, kamu diharapkan mampu menguraikan masalah, mengenali pola, memilih informasi penting, menyusun algoritma sederhana, dan bekerja sama dengan memperhatikan perasaan serta pendapat orang lain.</div>
+  </section>
+
+  <section class="page" id="mood">
+    <div class="section-heading"><div><h3>💗 Mood Check-in</h3><p>Kesadaran diri • Pengelolaan diri</p></div><span class="tag">Sebelum belajar</span></div>
+    <div class="card">
+      <h3>Bagaimana perasaanmu saat ini?</h3>
+      <p>Pilih perasaan yang paling mendekati keadaanmu. Tidak ada jawaban benar atau salah. Kamu tidak wajib membagikan pilihan ini kepada teman.</p>
+      <div class="mood-grid" id="moodGrid">
+        <button class="mood-option" data-mood="Senang"><span class="face">😄</span><span>Senang</span></button>
+        <button class="mood-option" data-mood="Tenang"><span class="face">😌</span><span>Tenang</span></button>
+        <button class="mood-option" data-mood="Biasa saja"><span class="face">😐</span><span>Biasa saja</span></button>
+        <button class="mood-option" data-mood="Cemas"><span class="face">😟</span><span>Cemas</span></button>
+        <button class="mood-option" data-mood="Lelah"><span class="face">😴</span><span>Lelah</span></button>
+      </div>
+      <div class="field"><label for="moodNeed">Apa yang bisa membantumu belajar hari ini? (opsional)</label><textarea id="moodNeed" placeholder="Contoh: instruksi yang jelas, waktu berpikir, atau bantuan teman..."></textarea></div>
+      <button class="btn btn-primary" id="saveMood">Simpan check-in di halaman ini</button>
+      <div class="result" id="moodResult" role="status"></div>
+      <div class="pse-support" id="moodSupport" aria-live="polite">
+        <span class="support-label">Strategi sosial emosional</span>
+        <h4 id="moodSupportTitle">Pilih perasaanmu untuk melihat strategi yang bisa dicoba</h4>
+        <p id="moodSupportText">Apa pun perasaanmu, semuanya boleh hadir. Pilih strategi yang terasa nyaman; kamu juga boleh tidak memilih apa pun.</p>
+      </div>
+      <p class="small-note">Privasi: pilihanmu hanya diproses di halaman ini dan tidak dikirim ke server. Jangan tuliskan informasi pribadi yang sensitif.</p>
+    </div>
+    <div class="grid-2" style="margin-top:16px">
+      <div class="card"><div class="card-icon">🌬️</div><h4>Jeda 30 detik</h4><p>Tarik napas perlahan, tahan sejenak, lalu embuskan. Ulangi dengan nyaman. Kamu boleh melewati aktivitas ini.</p><button class="btn btn-secondary" id="breathingBtn">Mulai jeda</button><div class="result" id="breathingResult"></div></div>
+      <div class="card"><div class="card-icon">🧭</div><h4>Niat belajarku</h4><p>Lengkapi kalimat ini dalam hati atau di buku catatanmu:</p><em>“Hari ini aku akan mencoba untuk …”</em></div>
+    </div>
+  </section>
+
+  <section class="page" id="mission">
+    <div class="section-heading"><div><h3>🔎 Misi Pemecahan Masalah</h3><p>Tahap 1 PBL: orientasi peserta didik pada masalah</p></div><span class="tag">Amati & pahami</span></div>
+    <div class="problem-box"><h4>🚨 Kasus: Antrean Kantin yang Panjang</h4><p>Saat istirahat, banyak siswa membeli makanan pada waktu yang hampir bersamaan. Antrean menjadi panjang, beberapa siswa terlambat masuk kelas, pembeli merasa tidak sabar, dan petugas kantin kewalahan. Ada siswa yang hanya membeli minuman, sementara yang lain memesan beberapa makanan.</p></div>
+    <div class="grid-2">
+      <div class="card"><h3>Siapa yang terdampak?</h3><p>Pikirkan kebutuhan dari sudut pandang yang berbeda.</p><div class="checklist">
+        <label class="check-row"><input type="checkbox"> Siswa yang mengantre dan harus kembali ke kelas tepat waktu.</label>
+        <label class="check-row"><input type="checkbox"> Petugas kantin yang menyiapkan dan melayani pesanan.</label>
+        <label class="check-row"><input type="checkbox"> Siswa yang membeli sedikit barang dan siswa yang membeli banyak.</label>
+        <label class="check-row"><input type="checkbox"> Warga sekolah lain yang membutuhkan suasana kantin tertib.</label>
+      </div></div>
+      <div class="card"><h3>Rumusan masalah</h3><p>Tuliskan masalah utama yang menurut kelompokmu perlu diselesaikan.</p>
+        <div class="field"><label for="problemStatement">Masalah yang kami pilih</label><textarea id="problemStatement" placeholder="Contoh: Waktu tunggu terlalu lama karena semua pesanan dilayani melalui satu alur..."></textarea></div>
+        <div class="field"><label for="successCriteria">Tanda solusi berhasil</label><textarea id="successCriteria" placeholder="Contoh: antrean lebih tertib, waktu tunggu berkurang, dan pelayanan tetap adil..."></textarea></div>
+        <button class="btn btn-primary" onclick="saveText('problemStatement','successCriteria','Rumusan masalah dan kriteria keberhasilan tersimpan sementara.')">Simpan jawaban</button>
+      </div>
+    </div>
+    <div class="callout"><strong>Pertanyaan pemantik:</strong> Apakah masalahnya hanya karena jumlah pembeli banyak, atau ada pola dalam cara orang memesan dan dilayani? Apa yang perlu diketahui sebelum mengusulkan solusi?</div>
+  </section>
+
+  <section class="page" id="collab">
+    <div class="section-heading"><div><h3>🤝 Ruang Kolaborasi</h3><p>Tahap 2 PBL: mengorganisasikan peserta didik untuk belajar</p></div><span class="tag">Bekerja bersama</span></div>
+    <div class="card">
+      <h3>Identitas kelompok</h3>
+      <div class="grid-2">
+        <div class="field"><label for="groupName">Nama kelompok</label><input id="groupName" type="text" placeholder="Contoh: Tim Solusi Cerdas"></div>
+        <div class="field"><label for="groupMembers">Nama anggota (pisahkan dengan koma)</label><input id="groupMembers" type="text" placeholder="Nama anggota kelompok"></div>
+      </div>
+      <h3 style="margin-top:18px">Pembagian peran</h3><p>Bagikan peran agar semua anggota berkontribusi. Sesuaikan dengan jumlah anggota kelompok.</p>
+      <div class="grid-2">
+        <div class="role"><strong>🧭 Koordinator</strong><small>Menjaga fokus, waktu, dan kesempatan bicara.</small></div>
+        <div class="role"><strong>🔍 Penyelidik</strong><small>Mengumpulkan informasi dan menemukan pola.</small></div>
+        <div class="role"><strong>📝 Pencatat</strong><small>Mencatat ide, pertanyaan, dan keputusan kelompok.</small></div>
+        <div class="role"><strong>🎤 Penyaji</strong><small>Menjelaskan solusi dan menerima masukan.</small></div>
+      </div>
+      <h3 style="margin-top:22px">Kesepakatan komunikasi</h3>
+      <div class="checklist">
+        <label class="check-row"><input type="checkbox" class="agreement"> Kami mendengarkan sampai teman selesai berbicara.</label>
+        <label class="check-row"><input type="checkbox" class="agreement"> Kami mengkritik ide dengan sopan, bukan menyerang orangnya.</label>
+        <label class="check-row"><input type="checkbox" class="agreement"> Kami memberi kesempatan setiap anggota berpendapat.</label>
+        <label class="check-row"><input type="checkbox" class="agreement"> Kami memutuskan berdasarkan alasan dan bukti, bukan sekadar ikut-ikutan.</label>
+      </div>
+      <button class="btn btn-primary" style="margin-top:16px" id="saveGroup">Simpan identitas & cek kesepakatan</button><div class="result" id="groupResult"></div>
+    </div>
+  </section>
+
+  <section class="page" id="lab">
+    <div class="section-heading"><div><h3>🧩 Laboratorium Berpikir Komputasional</h3><p>Tahap 3 PBL: membimbing penyelidikan individu dan kelompok</p></div><span class="tag">Selidiki</span></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-icon">🧩</div><h3>1. Dekomposisi</h3><p>Pecah masalah besar menjadi bagian kecil yang lebih mudah ditangani.</p><div class="field"><label for="decomp">Bagian masalah yang perlu diselidiki</label><textarea id="decomp" placeholder="Contoh: cara memesan, pembayaran, persiapan makanan, pengambilan pesanan, pengaturan antrean..."></textarea></div></div>
+      <div class="card"><div class="card-icon">🔁</div><h3>2. Pengenalan Pola</h3><p>Cari kejadian atau kebiasaan yang berulang dan mungkin menjelaskan masalah.</p><div class="field"><label for="pattern">Pola yang ditemukan</label><textarea id="pattern" placeholder="Contoh: antrean memuncak pada awal istirahat; pesanan sederhana dan kompleks bercampur..."></textarea></div></div>
+      <div class="card"><div class="card-icon">🎯</div><h3>3. Abstraksi</h3><p>Pilih informasi penting dan abaikan detail yang tidak memengaruhi solusi utama.</p><div class="field"><label for="abstract">Informasi penting</label><textarea id="abstract" placeholder="Contoh: jumlah pembeli, jenis pesanan, waktu pelayanan, jumlah petugas..."></textarea></div></div>
+      <div class="card"><div class="card-icon">🧠</div><h3>4. Uji ide awal</h3><p>Gunakan temuanmu untuk menentukan perubahan apa yang layak dicoba.</p><div class="field"><label for="idea">Ide solusi awal</label><textarea id="idea" placeholder="Contoh: pisahkan alur pembelian minuman siap saji dan makanan yang perlu disiapkan..."></textarea></div></div>
+    </div>
+    <button class="btn btn-primary" id="saveLab">Simpan hasil penyelidikan</button><div class="result" id="labResult"></div>
+    <div class="callout"><strong>Ingat PSE:</strong> Saat membahas ide, tanyakan juga: Apakah solusi ini adil bagi pembeli dan petugas? Siapa yang mungkin kesulitan menggunakannya?</div>
+  </section>
+
+  <section class="page" id="algorithm">
+    <div class="section-heading"><div><h3>⚙️ Susun Algoritma & Galeri Solusi</h3><p>Tahap 4–5 PBL: mengembangkan solusi dan mempresentasikan hasil</p></div><span class="tag">Rancang & bagikan</span></div>
+    <div class="card">
+      <h3>Rancang langkah solusi</h3><p>Susun urutan instruksi yang jelas, masuk akal, dan dapat diikuti orang lain. Kamu dapat menambah atau menghapus langkah.</p>
+      <div class="field"><label for="solutionTitle">Nama solusi kelompok</label><input type="text" id="solutionTitle" placeholder="Contoh: Antrean Kantin Dua Jalur"></div>
+      <div id="steps" class="steps">
+        <div class="step-row"><div class="step-number">1</div><input type="text" class="step-input" placeholder="Langkah pertama..."><button class="icon-btn" onclick="removeStep(this)" title="Hapus langkah">×</button></div>
+        <div class="step-row"><div class="step-number">2</div><input type="text" class="step-input" placeholder="Langkah kedua..."><button class="icon-btn" onclick="removeStep(this)" title="Hapus langkah">×</button></div>
+        <div class="step-row"><div class="step-number">3</div><input type="text" class="step-input" placeholder="Langkah ketiga..."><button class="icon-btn" onclick="removeStep(this)" title="Hapus langkah">×</button></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-secondary" id="addStep">＋ Tambah langkah</button><button class="btn btn-primary" id="previewAlgorithm">Lihat pratinjau</button><button class="btn btn-green" id="downloadSolution">Unduh hasil (.txt)</button></div>
+      <div class="result" id="algorithmResult"></div>
+      <div id="algorithmPreview" class="card" style="display:none;margin-top:15px;background:#f8faff"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>Galeri solusi & umpan balik</h3><p>Gunakan bagian ini untuk menuliskan umpan balik positif kepada kelompok lain.</p>
+      <p><strong>Mulai dengan bahasa yang menghargai:</strong> pilih salah satu kalimat untuk dijadikan awal umpan balikmu.</p>
+      <div class="phrase-tools" aria-label="Pilihan kalimat umpan balik">
+        <button class="phrase-chip" type="button" data-phrase="Saya mengapresiasi ide kelompokmu karena ">Saya mengapresiasi…</button>
+        <button class="phrase-chip" type="button" data-phrase="Saya ingin memahami lebih jauh tentang ">Saya ingin memahami…</button>
+        <button class="phrase-chip" type="button" data-phrase="Mungkin kelompokmu dapat mempertimbangkan ">Saran yang membangun…</button>
+      </div>
+      <div class="field"><label for="peerFeedback">Umpan balik yang membangun</label><textarea id="peerFeedback" placeholder="Saya mengapresiasi ... Saran saya, kelompok dapat mempertimbangkan ..."></textarea></div>
+      <button class="btn btn-purple" id="saveFeedback">Simpan umpan balik sementara</button><div class="result" id="feedbackResult"></div>
+    </div>
+  </section>
+
+  <section class="page" id="reflection">
+    <div class="section-heading"><div><h3>🌱 Refleksi & Evaluasi</h3><p>Tahap 6 PBL: menganalisis dan mengevaluasi proses pemecahan masalah</p></div><span class="tag">Tumbuh dari proses</span></div>
+    <div class="card">
+      <h3>Jurnal refleksi pribadi</h3>
+      <div class="field"><label for="reflectFeeling">1. Apa yang kamu rasakan saat bekerja dalam kelompok?</label><textarea id="reflectFeeling" placeholder="Aku merasa ... karena ..."></textarea></div>
+      <div class="field"><label for="reflectLearn">2. Konsep berpikir komputasional apa yang paling membantumu?</label><textarea id="reflectLearn" placeholder="Dekomposisi / pengenalan pola / abstraksi / algoritma, karena ..."></textarea></div>
+      <div class="field"><label for="reflectSocial">3. Bagaimana kamu mendengarkan dan menghargai pendapat teman?</label><textarea id="reflectSocial" placeholder="Aku mencoba ..."></textarea></div>
+      <div class="field"><label for="reflectNext">4. Apa yang akan kamu lakukan berbeda pada kegiatan berikutnya?</label><textarea id="reflectNext" placeholder="Pada kegiatan berikutnya, aku akan ..."></textarea></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>📝 Kuis pemahaman</h3>
+      <p>Pilih jawaban terbaik untuk setiap pertanyaan.</p>
+      <form id="quizForm">
+        <div class="quiz-question"><h4>1. Memecah masalah antrean menjadi proses pemesanan, pembayaran, dan pengambilan merupakan ...</h4>
+          <label><input type="radio" name="q1" value="a"> A. Abstraksi</label><label><input type="radio" name="q1" value="b"> B. Dekomposisi</label><label><input type="radio" name="q1" value="c"> C. Pengulangan</label></div>
+        <div class="quiz-question"><h4>2. Menyadari antrean selalu memuncak pada awal istirahat adalah contoh ...</h4>
+          <label><input type="radio" name="q2" value="a"> A. Pengenalan pola</label><label><input type="radio" name="q2" value="b"> B. Abstraksi</label><label><input type="radio" name="q2" value="c"> C. Presentasi</label></div>
+        <div class="quiz-question"><h4>3. Memilih informasi tentang jumlah pembeli dan waktu pelayanan sambil mengabaikan warna tas pembeli adalah ...</h4>
+          <label><input type="radio" name="q3" value="a"> A. Dekomposisi</label><label><input type="radio" name="q3" value="b"> B. Keterampilan berelasi</label><label><input type="radio" name="q3" value="c"> C. Abstraksi</label></div>
+        <div class="quiz-question"><h4>4. Urutan instruksi yang jelas untuk menjalankan solusi disebut ...</h4>
+          <label><input type="radio" name="q4" value="a"> A. Algoritma</label><label><input type="radio" name="q4" value="b"> B. Mood check-in</label><label><input type="radio" name="q4" value="c"> C. Pola</label></div>
+        <div class="quiz-question"><h4>5. Ketika pendapatmu berbeda dengan teman, tindakan yang paling tepat adalah ...</h4>
+          <label><input type="radio" name="q5" value="a"> A. Mengabaikan pendapat teman</label><label><input type="radio" name="q5" value="b"> B. Mendengarkan alasan, membandingkan bukti, lalu mengambil keputusan bersama</label><label><input type="radio" name="q5" value="c"> C. Memaksa kelompok mengikuti pendapatmu</label></div>
+        <button type="submit" class="btn btn-primary">Periksa jawaban</button>
+      </form>
+      <div class="result" id="quizResult"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>Ringkasan hasil belajarku</h3><p>Unduh jawaban yang sudah kamu isi di halaman ini agar dapat disimpan atau dikumpulkan sesuai arahan guru.</p>
+      <button class="btn btn-green" id="downloadAll">Unduh ringkasan kegiatan (.txt)</button>
+      <p class="small-note">Catatan: data tersimpan sementara di halaman yang sedang dibuka. Jika halaman dimuat ulang, data dapat hilang. Unduh ringkasan sebelum menutup halaman.</p>
+    </div>
+  </section>
+
+  <footer class="footer"><span>Ruang Rasa & Logika • KKA Kelas X SMK</span><span>Belajar dengan logika, bertumbuh dengan empati 💙</span></footer>
+</main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+const titles={home:"Selamat datang, Penjelajah!",mood:"Kenali Perasaanmu",mission:"Selidiki Masalah",collab:"Bekerja Sama dengan Empati",lab:"Temukan Pola dan Informasi Penting",algorithm:"Rancang Solusi yang Teratur",reflection:"Refleksi dan Evaluasi"};
+const state={mood:"",moodNeed:""};
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));
+ document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+ document.getElementById("pageTitle").textContent=titles[id]||"Ruang Belajar";
+ document.getElementById("sidebar").classList.remove("open");
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+document.getElementById("menuToggle").addEventListener("click",()=>document.getElementById("sidebar").classList.toggle("open"));
+let toastTimer;
+function toast(message){const t=document.getElementById("toast");t.textContent=message;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),3000)}
+function showResult(id,message){const el=document.getElementById(id);el.textContent=message;el.classList.add("show")}
+const moodStrategies={
+ "Senang":{title:"Gunakan energi positifmu",text:"Pilih satu tantangan yang ingin kamu coba. Bagikan semangatmu tanpa mendominasi, dan beri ruang bagi teman lain untuk menyampaikan ide."},
+ "Tenang":{title:"Pertahankan ritme yang nyaman",text:"Gunakan ketenanganmu untuk mendengarkan dengan saksama, mengamati bukti, dan membantu kelompok mempertimbangkan pilihan."},
+ "Biasa saja":{title:"Mulai dari satu langkah kecil",text:"Kamu tidak harus merasa sangat bersemangat untuk mulai belajar. Pilih satu tugas sederhana, lalu lanjutkan setahap demi setahap."},
+ "Cemas":{title:"Berhenti sejenak dan cari dukungan",text:"Coba tarik dan embuskan napas perlahan jika nyaman. Pecah tugas menjadi langkah kecil, dan ingat bahwa kamu boleh bertanya atau meminta bantuan."},
+ "Lelah":{title:"Atur energi dan beri jeda",text:"Kerjakan bagian yang paling sederhana terlebih dahulu. Minum air atau beristirahat sejenak bila memungkinkan, lalu sampaikan kebutuhanmu kepada guru atau kelompok."}
+};
+document.querySelectorAll(".mood-option").forEach(btn=>btn.addEventListener("click",()=>{
+ document.querySelectorAll(".mood-option").forEach(b=>b.classList.remove("selected"));btn.classList.add("selected");state.mood=btn.dataset.mood;
+ const strategy=moodStrategies[state.mood];document.getElementById("moodSupportTitle").textContent=strategy.title;document.getElementById("moodSupportText").textContent=strategy.text;
+}));
+document.getElementById("saveMood").addEventListener("click",()=>{
+ if(!state.mood){toast("Pilih satu perasaan terlebih dahulu, atau lewati check-in jika tidak ingin menjawab.");return}
+ state.moodNeed=document.getElementById("moodNeed").value.trim();
+ const messages={"Senang":"Bagus! Manfaatkan energi positifmu untuk mencoba ide baru.","Tenang":"Pertahankan ketenangan dan beri ruang untuk berpikir.","Biasa saja":"Tidak apa-apa. Mulailah dari satu langkah kecil.","Cemas":"Ambil waktu sejenak. Kamu boleh meminta bantuan saat diperlukan.","Lelah":"Atur ritme belajarmu dan sampaikan jika membutuhkan jeda."};
+ showResult("moodResult","Check-in tersimpan sementara. "+messages[state.mood]+" "+(state.moodNeed?"Kebutuhan belajarmu sudah dicatat di halaman ini.":""));
+});
+let breathingTimer;
+document.getElementById("breathingBtn").addEventListener("click",()=>{
+ const btn=document.getElementById("breathingBtn"),out=document.getElementById("breathingResult");
+ if(breathingTimer){clearInterval(breathingTimer);breathingTimer=null}
+ let n=3;out.classList.add("show");out.textContent="Tarik napas perlahan…";btn.disabled=true;
+ breathingTimer=setInterval(()=>{n--;if(n===2)out.textContent="Tahan napas sebentar jika nyaman…";else if(n===1)out.textContent="Emb uskan perlahan…".replace("Emb uskan","Embuskan");else{clearInterval(breathingTimer);breathingTimer=null;out.textContent="Selesai. Lanjutkan saat kamu siap.";btn.disabled=false}},2500);
+});
+function saveText(a,b,message){const x=document.getElementById(a).value.trim(),y=document.getElementById(b).value.trim();if(!x&&!y){toast("Isi setidaknya satu kolom terlebih dahulu.");return}toast(message)}
+document.getElementById("saveGroup").addEventListener("click",()=>{
+ const name=document.getElementById("groupName").value.trim(),members=document.getElementById("groupMembers").value.trim(),checked=[...document.querySelectorAll(".agreement:checked")].length;
+ showResult("groupResult",`Identitas kelompok diperiksa. ${name?"Kelompok: "+name+". ":"Silakan isi nama kelompok jika diperlukan. "}${members?"Anggota: "+members+". ":""}Kesepakatan dicentang: ${checked}/4. Diskusikan kesepakatan yang belum disetujui bersama.`);
+});
+document.getElementById("saveLab").addEventListener("click",()=>{
+ const ids=["decomp","pattern","abstract","idea"],count=ids.filter(id=>document.getElementById(id).value.trim()).length;
+ showResult("labResult",`Hasil penyelidikan diperiksa: ${count} dari 4 bagian sudah diisi. ${count<4?"Lengkapi bagian lainnya jika memungkinkan.":"Bagus! Gunakan hasil penyelidikan untuk menyusun algoritma."}`);
+});
+function renumberSteps(){document.querySelectorAll(".step-row").forEach((row,i)=>row.querySelector(".step-number").textContent=i+1)}
+function removeStep(btn){const rows=document.querySelectorAll(".step-row");if(rows.length<=1){toast("Minimal harus ada satu langkah.");return}btn.closest(".step-row").remove();renumberSteps()}
+document.getElementById("addStep").addEventListener("click",()=>{
+ const box=document.getElementById("steps"),row=document.createElement("div");row.className="step-row";
+ row.innerHTML='<div class="step-number"></div><input type="text" class="step-input" placeholder="Tuliskan langkah berikutnya..."><button class="icon-btn" type="button" title="Hapus langkah">×</button>';
+ row.querySelector("button").addEventListener("click",function(){removeStep(this)});box.appendChild(row);renumberSteps();row.querySelector("input").focus();
+});
+function getAlgorithm(){return [...document.querySelectorAll(".step-input")].map(i=>i.value.trim()).filter(Boolean)}
+document.getElementById("previewAlgorithm").addEventListener("click",()=>{
+ const title=document.getElementById("solutionTitle").value.trim()||"Solusi Kelompok",steps=getAlgorithm(),box=document.getElementById("algorithmPreview");
+ if(!steps.length){toast("Isi setidaknya satu langkah algoritma.");return}
+ box.style.display="block";box.innerHTML="<h3>"+escapeHTML(title)+"</h3><ol>"+steps.map(s=>"<li>"+escapeHTML(s)+"</li>").join("")+"</ol><p class='small-note'>Periksa apakah urutannya jelas, adil, dan dapat dijalankan.</p>";
+ showResult("algorithmResult","Pratinjau algoritma berhasil dibuat.");
+});
+document.getElementById("downloadSolution").addEventListener("click",()=>{
+ const steps=getAlgorithm();if(!steps.length){toast("Isi setidaknya satu langkah algoritma.");return}
+ downloadText("algoritma_solusi.txt",`NAMA SOLUSI: ${document.getElementById("solutionTitle").value||"Solusi Kelompok"}\n\nLANGKAH ALGORITMA:\n${steps.map((s,i)=>`${i+1}. ${s}`).join("\n")}`);
+});
+document.querySelectorAll(".phrase-chip").forEach(btn=>btn.addEventListener("click",()=>{
+ const field=document.getElementById("peerFeedback"),phrase=btn.dataset.phrase;
+ if(!field.value.trim()) field.value=phrase;
+ else if(!field.value.endsWith(" ") && !field.value.endsWith("\n")) field.value+=" ";
+ if(field.value.trim()!==phrase.trim() && !field.value.includes(phrase)) field.value+=phrase;
+ field.focus();
+}));
+document.getElementById("saveFeedback").addEventListener("click",()=>{
+ const v=document.getElementById("peerFeedback").value.trim();if(!v){toast("Tuliskan umpan balik terlebih dahulu.");return}showResult("feedbackResult","Umpan balik tersimpan sementara. Pastikan disampaikan dengan sopan dan spesifik.");
+});
+document.getElementById("quizForm").addEventListener("submit",e=>{
+ e.preventDefault();const key={q1:"b",q2:"a",q3:"c",q4:"a",q5:"b"};let score=0,answered=0;
+ Object.keys(key).forEach(q=>{const a=document.querySelector(`input[name="${q}"]:checked`);if(a){answered++;if(a.value===key[q])score++}});
+ if(answered<5){showResult("quizResult",`Kamu baru menjawab ${answered} dari 5 soal. Lengkapi semua soal untuk melihat hasil.`);return}
+ const msg=score>=4?"Bagus! Kamu sudah memahami sebagian besar konsep.":score>=3?"Cukup baik. Tinjau kembali konsep yang masih membingungkan.":"Terus berlatih. Baca kembali materi dan diskusikan dengan guru atau teman.";
+ showResult("quizResult",`Skor: ${score}/5 (${score*20}/100). ${msg}`);
+});
+function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function downloadText(filename,text){
+ const blob=new Blob([text],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);toast("File berhasil disiapkan untuk diunduh.");
+}
+function getVal(id){return (document.getElementById(id)?.value||"").trim()}
+document.getElementById("downloadAll").addEventListener("click",()=>{
+ const steps=getAlgorithm(),checked=[...document.querySelectorAll(".agreement:checked")].length;
+ const textContent=[
+ "RUANG RASA & LOGIKA — RINGKASAN KEGIATAN",
+ "Mata pelajaran: Koding dan Kecerdasan Artifisial (KKA)",
+ "Materi: Berpikir Komputasional | Kelas X SMK",
+ "",
+ "MOOD CHECK-IN",`Perasaan: ${state.mood||"(tidak diisi)"}`,`Kebutuhan belajar: ${state.moodNeed||"(tidak diisi)"}`,
+ "",
+ "MISI PEMECAHAN MASALAH",`Rumusan masalah: ${getVal("problemStatement")||"(belum diisi)"}`,`Kriteria keberhasilan: ${getVal("successCriteria")||"(belum diisi)"}`,
+ "",
+ "KOLABORASI",`Nama kelompok: ${getVal("groupName")||"(belum diisi)"}`,`Anggota: ${getVal("groupMembers")||"(belum diisi)"}`,`Kesepakatan yang dicentang: ${checked}/4`,
+ "",
+ "PENYELIDIKAN CT",`Dekomposisi: ${getVal("decomp")||"(belum diisi)"}`,`Pengenalan pola: ${getVal("pattern")||"(belum diisi)"}`,`Abstraksi: ${getVal("abstract")||"(belum diisi)"}`,`Ide awal: ${getVal("idea")||"(belum diisi)"}`,
+ "",
+ "ALGORITMA",`Nama solusi: ${getVal("solutionTitle")||"(belum diisi)"}`,...steps.map((s,i)=>`${i+1}. ${s}`),
+ "",`Umpan balik: ${getVal("peerFeedback")||"(belum diisi)"}`,
+ "",
+ "REFLEKSI",`Perasaan saat berkelompok: ${getVal("reflectFeeling")||"(belum diisi)"}`,`Konsep CT: ${getVal("reflectLearn")||"(belum diisi)"}`,`Menghargai pendapat: ${getVal("reflectSocial")||"(belum diisi)"}`,`Perbaikan berikutnya: ${getVal("reflectNext")||"(belum diisi)"}`,
+ "", "Catatan: ringkasan dibuat dari isian pada perangkat ini."
+ ].join("\n");
+ downloadText("ringkasan_ruang_rasa_logika.txt",textContent);
+});
+</script>
+</body>
+</html>
